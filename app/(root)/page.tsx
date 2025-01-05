@@ -3,7 +3,7 @@ export const metadata = {
 };
 
 const Homepage = () => {
-	return <>Audio Vault</>;
+	return <>AudioVault</>;
 };
 
 export default Homepage;

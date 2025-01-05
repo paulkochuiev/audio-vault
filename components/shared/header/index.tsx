@@ -1,19 +1,21 @@
 "use client";
 
-import { ShoppingCart, UserIcon } from "lucide-react";
 import Link from "next/link";
 import Image from "next/image";
+import { useTheme } from "next-themes";
 
 import { APP_NAME } from "@/lib/constants";
-import { Button } from "@/components/ui/button";
-import ModeToggle from "./mode-toggle";
-import { useTheme } from "next-themes";
+import { isServer } from "@/utils/helpers";
+import Menu from "./menu";
 
 const Header = () => {
 	const { resolvedTheme } = useTheme();
 
-	const logoSrc =
-		resolvedTheme === "light" ? "/images/logoBlack.png" : "/images/logoWhite.png";
+	const logoSrc = isServer()
+		? "/images/logoBlack.png"
+		: resolvedTheme === "light"
+		? "/images/logoBlack.png"
+		: "/images/logoWhite.png";
 
 	return (
 		<header>
@@ -26,6 +28,8 @@ const Header = () => {
 								alt={`${APP_NAME} logo`}
 								height={48}
 								width={48}
+								className="w-auto h-auto"
+								fetchPriority="high"
 								priority
 							/>
 							<span className="hidden lg:block font-bold text-2xl ml-3">
@@ -33,21 +37,7 @@ const Header = () => {
 							</span>
 						</Link>
 					</div>
-					<div className="space-x-2">
-						<ModeToggle />
-						<Button asChild variant="ghost">
-							<Link href="/cart">
-								<ShoppingCart />
-								Cart
-							</Link>
-						</Button>
-						<Button asChild>
-							<Link href="/sign-in">
-								<UserIcon />
-								Sign In
-							</Link>
-						</Button>
-					</div>
+					<Menu />
 				</div>
 			</div>
 		</header>
