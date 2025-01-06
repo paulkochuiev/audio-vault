@@ -49,7 +49,7 @@ const sampleData = {
 			brand: "Korg",
 			rating: 4.7,
 			numReviews: 28,
-			stock: 3,
+			stock: 0,
 			isFeatured: false,
 			banner: null,
 		},
