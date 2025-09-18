@@ -8,7 +8,7 @@ const sampleData = {
         "Professional 4-channel DJ controller with club-style layout",
       images: [
         "/images/sample-products/p1-1.webp",
-        "/images/sample-products/p1-2.webp",
+        "/images/sample-products/p1-2.jpg",
       ],
       price: 1199.99,
       brand: "Pioneer DJ",
