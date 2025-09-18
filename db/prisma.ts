@@ -1,7 +1,6 @@
-import { Product } from "@/types";
+import { PrismaClient } from "@/lib/generated/prisma";
 import { neonConfig } from "@neondatabase/serverless";
 import { PrismaNeon } from "@prisma/adapter-neon";
-import { PrismaClient } from "@prisma/client";
 import ws from "ws";
 
 neonConfig.webSocketConstructor = ws;
@@ -13,14 +12,12 @@ export const prisma = new PrismaClient({ adapter }).$extends({
   result: {
     product: {
       price: {
-        compute(product: Product) {
-          return product.price.toString();
-        },
+        needs: { price: true },
+        compute: ({ price }) => price.toString(),
       },
       rating: {
-        compute(product: Product) {
-          return product.rating.toString();
-        },
+        needs: { rating: true },
+        compute: ({ rating }) => rating.toString(),
       },
     },
   },
