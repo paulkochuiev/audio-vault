@@ -5,6 +5,7 @@ import CredentialsProvider from "next-auth/providers/credentials";
 import { compareSync } from "bcrypt-ts-edge";
 import type { NextAuthConfig } from "next-auth";
 import { NextResponse } from "next/server";
+import { cookies } from "next/headers";
 
 export const config = {
   pages: {
@@ -63,8 +64,9 @@ export const config = {
 
       return session;
     },
-    async jwt({ token, user }: any) {
+    async jwt({ token, user, trigger }: any) {
       if (user) {
+        token.id = user.id;
         token.role = user.role;
 
         if (user.name === "NO_NAME") {
@@ -75,11 +77,48 @@ export const config = {
             data: { name: token.name },
           });
         }
+
+        if (trigger === "signIn" || trigger === "signUp") {
+          const cookiesObject = await cookies();
+          const sessionCartId = cookiesObject.get("sessionCartId")?.value;
+
+          if (sessionCartId) {
+            const sessionCart = await prisma.cart.findFirst({
+              where: { sessionCartId },
+            });
+
+            if (sessionCart) {
+              await prisma.cart.deleteMany({ where: { userId: user.id } });
+
+              await prisma.cart.update({
+                where: { id: sessionCart.id },
+                data: { userId: user.id },
+              });
+            }
+          }
+        }
       }
 
       return token;
     },
-    authorized({ request }: any) {
+    authorized({ request, auth }: any) {
+      const { pathname } = request.nextUrl as URL;
+
+      const protectedRoutes: RegExp[] = [
+        /^\/shipping-address$/,
+        /^\/payment-method$/,
+        /^\/place-order$/,
+        /^\/user(\/|$)/,
+        /^\/order(\/|$)/,
+        /^\/admin(\/|$)/,
+      ];
+
+      const isProtected = protectedRoutes.some((re) => re.test(pathname));
+
+      if (isProtected && !auth) {
+        return false;
+      }
+
       if (!request.cookies.get("sessionCartId")) {
         const sessionCartId = crypto.randomUUID();
 
