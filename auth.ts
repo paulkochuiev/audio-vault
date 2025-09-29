@@ -4,7 +4,6 @@ import { prisma } from "@/db/prisma";
 import CredentialsProvider from "next-auth/providers/credentials";
 import { compareSync } from "bcrypt-ts-edge";
 import type { NextAuthConfig } from "next-auth";
-import { NextResponse } from "next/server";
 import { cookies } from "next/headers";
 
 export const config = {
@@ -14,7 +13,7 @@ export const config = {
   },
   session: {
     strategy: "jwt",
-    maxAge: 30 * 24 * 60 * 60, // 30 days
+    maxAge: 30 * 24 * 60 * 60,
   },
   adapter: PrismaAdapter(prisma),
   providers: [
@@ -100,40 +99,6 @@ export const config = {
       }
 
       return token;
-    },
-    authorized({ request, auth }: any) {
-      const { pathname } = request.nextUrl as URL;
-
-      const protectedRoutes: RegExp[] = [
-        /^\/shipping-address$/,
-        /^\/payment-method$/,
-        /^\/place-order$/,
-        /^\/user(\/|$)/,
-        /^\/order(\/|$)/,
-        /^\/admin(\/|$)/,
-      ];
-
-      const isProtected = protectedRoutes.some((re) => re.test(pathname));
-
-      if (isProtected && !auth) {
-        return false;
-      }
-
-      if (!request.cookies.get("sessionCartId")) {
-        const sessionCartId = crypto.randomUUID();
-
-        const newRequestHeaders = new Headers(request.headers);
-
-        const response = NextResponse.next({
-          request: { headers: newRequestHeaders },
-        });
-
-        response.cookies.set("sessionCartId", sessionCartId);
-
-        return response;
-      } else {
-        return true;
-      }
     },
   },
 } satisfies NextAuthConfig;
