@@ -16,8 +16,7 @@ export const paypal = {
         intent: "CAPTURE",
         purchase_units: [
           {
-            amount: { currency_code: "USD" },
-            value: price,
+            amount: { currency_code: "USD", value: price },
           },
         ],
       }),
@@ -30,7 +29,7 @@ export const paypal = {
     const url = `${base}/v2/checkout/orders/${orderId}/capture`;
 
     const res = await fetch(url, {
-      method: "POSR",
+      method: "POST",
       headers: {
         "Content-Type": "application/json",
         Authorization: `Bearer ${accessToken}`,
