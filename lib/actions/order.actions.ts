@@ -149,7 +149,7 @@ export const createPayPalOrder = async (orderId: string) => {
 
 export const approvePayPalOrder = async (
   orderId: string,
-  data: { orderId: string }
+  data: { orderID: string }
 ) => {
   try {
     const order = await prisma.order.findFirst({
@@ -160,7 +160,7 @@ export const approvePayPalOrder = async (
       throw new Error("Order not found");
     }
 
-    const captureData = await paypal.capturePayment(data.orderId);
+    const captureData = await paypal.capturePayment(data.orderID);
 
     if (
       !captureData ||
