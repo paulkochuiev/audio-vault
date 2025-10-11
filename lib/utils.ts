@@ -19,7 +19,7 @@ export const formatNumberWithDecimal = (num: number): string => {
 };
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-export const formatError = async (error: any) => {
+export const formatError = (error: any) => {
   if (error instanceof ZodError) {
     return error.issues.map((issue) => issue.message).join(". ");
   } else if (

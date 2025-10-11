@@ -12,6 +12,7 @@ import { paypal } from "../paypal";
 import { revalidatePath } from "next/cache";
 import { PAGE_SIZE } from "../constants";
 import { Prisma } from "@prisma/client";
+import { success } from "zod";
 
 export const createOrder = async () => {
   try {
@@ -323,4 +324,44 @@ export const getOrderSummary = async () => {
     latestSales,
     salesData,
   };
+};
+
+export const getAllOrders = async ({
+  limit = PAGE_SIZE,
+  page,
+}: {
+  limit?: number;
+  page: number;
+}) => {
+  const data = await prisma.order.findMany({
+    orderBy: { createdAt: "desc" },
+    take: limit,
+    skip: (page - 1) * limit,
+    include: { user: { select: { name: true } } },
+  });
+
+  const dataCount = await prisma.order.count();
+
+  return {
+    data,
+    totalPages: Math.ceil(dataCount / limit),
+  };
+};
+
+export const deleteOrder = async (id: string) => {
+  try {
+    await prisma.order.delete({ where: { id } });
+
+    revalidatePath("/admin/orders");
+
+    return {
+      success: true,
+      message: "Order deleted successfully",
+    };
+  } catch (error) {
+    return {
+      success: false,
+      message: formatError(error),
+    };
+  }
 };
