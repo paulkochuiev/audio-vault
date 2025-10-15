@@ -15,8 +15,8 @@ export const ourFileRouter = {
 
       return { userId: session?.user?.id };
     })
-    .onUploadComplete(async ({ metadata, file }) => {
-      return { uploadedBy: metadata.userId, url: file.url };
+    .onUploadComplete(async ({ metadata }) => {
+      return { uploadedBy: metadata.userId };
     }),
 } satisfies FileRouter;
 export type OurFileRouter = typeof ourFileRouter;
