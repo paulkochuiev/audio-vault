@@ -21,11 +21,11 @@ export const getProductBySlug = async (slug: string) => {
 };
 
 export const getAllProducts = async ({
-  query,
+  // query,
   limit = PAGE_SIZE,
   page,
-  category,
-}: {
+}: // category,
+{
   query: string;
   limit?: number;
   page: number;
