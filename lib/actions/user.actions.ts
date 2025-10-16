@@ -14,6 +14,7 @@ import { formatError } from "../utils";
 import { ShippingAddress } from "@/types";
 import z from "zod";
 import { PAGE_SIZE } from "../constants";
+import { revalidatePath } from "next/cache";
 
 export const signInWithCredentials = async (
   prevState: unknown,
@@ -183,4 +184,24 @@ export const getAllUsers = async ({
     data,
     totalPages: Math.ceil(dataCount / limit),
   };
+};
+
+export const deleteUser = async (id: string) => {
+  try {
+    await prisma.user.delete({
+      where: { id },
+    });
+
+    revalidatePath("/admin/users");
+
+    return {
+      success: true,
+      message: "User deleted succesfully",
+    };
+  } catch (error) {
+    return {
+      success: false,
+      message: formatError(error),
+    };
+  }
 };
