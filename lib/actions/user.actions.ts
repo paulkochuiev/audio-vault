@@ -13,6 +13,7 @@ import { prisma } from "@/db/prisma";
 import { formatError } from "../utils";
 import { ShippingAddress } from "@/types";
 import z from "zod";
+import { PAGE_SIZE } from "../constants";
 
 export const signInWithCredentials = async (
   prevState: unknown,
@@ -161,4 +162,25 @@ export const updateUserProfile = async (user: {
   } catch (error) {
     return { success: false, message: formatError(error) };
   }
+};
+
+export const getAllUsers = async ({
+  limit = PAGE_SIZE,
+  page,
+}: {
+  limit?: number;
+  page: number;
+}) => {
+  const data = await prisma.user.findMany({
+    orderBy: { createdAt: "desc" },
+    take: limit,
+    skip: (page - 1) * limit,
+  });
+
+  const dataCount = await prisma.user.count();
+
+  return {
+    data,
+    totalPages: Math.ceil(dataCount / limit),
+  };
 };
