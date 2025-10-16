@@ -22,19 +22,50 @@ import { ControllerRenderProps, useForm } from "react-hook-form";
 import { z } from "zod";
 import { USER_ROLES } from "@/lib/constants";
 import { Button } from "@/components/ui/button";
+import { useToast } from "@/hooks/use-toast";
+import { updateUser } from "@/lib/actions/user.actions";
+import { useRouter } from "next/navigation";
 
 const UpdateUserForm = ({
   user,
 }: {
   user: z.infer<typeof updateUserSchema>;
 }) => {
+  const { toast } = useToast();
+  const router = useRouter();
+
   const form = useForm<z.infer<typeof updateUserSchema>>({
     resolver: zodResolver(updateUserSchema),
     defaultValues: user,
   });
 
-  const onSubmit = () => {
-    return;
+  const onSubmit = async (values: z.infer<typeof updateUserSchema>) => {
+    try {
+      const res = await updateUser({
+        ...values,
+        id: user.id,
+      });
+
+      if (!res.success) {
+        return toast({
+          variant: "destructive",
+          description: res.message,
+        });
+      }
+
+      toast({
+        description: res.message,
+      });
+
+      form.reset();
+
+      router.push("/admin/users");
+    } catch (error) {
+      toast({
+        variant: "destructive",
+        description: (error as Error).message,
+      });
+    }
   };
 
   return (
