@@ -27,7 +27,7 @@ export const getProductById = async (productId: string) => {
   return convertToPlainObject(data);
 };
 
-export async function getAllProducts({
+export const getAllProducts = async ({
   query,
   limit = PAGE_SIZE,
   page,
@@ -43,7 +43,7 @@ export async function getAllProducts({
   price?: string;
   rating?: string;
   sort?: string;
-}) {
+}) => {
   const queryFilter: Prisma.ProductWhereInput =
     query && query !== "all"
       ? {
@@ -100,7 +100,7 @@ export async function getAllProducts({
     data,
     totalPages: Math.ceil(dataCount / limit),
   };
-}
+};
 
 export const deleteProduct = async (id: string) => {
   try {
