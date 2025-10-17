@@ -19,7 +19,6 @@ import Rating from "@/components/shared/product/rating";
 const ReviewList = ({
   userId,
   productId,
-  productSlug,
 }: {
   userId: string;
   productId: string;
@@ -27,7 +26,10 @@ const ReviewList = ({
 }) => {
   const [reviews, setReviews] = useState<Review[]>([]);
 
-  const reload = () => {};
+  const reload = async () => {
+    const res = await getReviews({ productId });
+    setReviews([...res.data]);
+  };
 
   useEffect(() => {
     const loadReviews = async () => {
