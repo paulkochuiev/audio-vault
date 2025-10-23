@@ -1,4 +1,4 @@
-# AudioVault — Next.js E-commerce (from the “Next.js Ecommerce 2025” course)
+# AudioVault — Next.js E-commerce
 
 A full-stack shopping platform built with **Next.js 15**, **React 19**, **TypeScript**, **Prisma + PostgreSQL**, and **Vercel**.
 It implements real payments (**Stripe** + **PayPal**), file uploads (**UploadThing**), transactional email (**Resend**), authentication, an admin dashboard, and more.
